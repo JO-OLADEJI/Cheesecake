@@ -122,6 +122,18 @@ describe('Cheesecake NFT', () => {
       ).to.be.revertedWith('MAX_SUPPLY_REACHED');
     });
 
+    it('should revert if contract is currently paused', async () => {
+      const [deployer, addr1] = await ethers.getSigners();
+      presaleDuration = 60; // 60 seconds
+      await Whitelist.connect(addr1).addAddressToWhitelist();
+      await CheesecakeNFT.connect(deployer).startPresale(presaleDuration);
+      await CheesecakeNFT.connect(deployer).setPaused(true);
+
+      await expect(
+        CheesecakeNFT.connect(addr1).presaleMint({ value: mintPrice })
+      ).to.be.revertedWith('CONTRACT_PAUSED');
+    });
+
   });
 
 
