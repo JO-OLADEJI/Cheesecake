@@ -2,11 +2,11 @@ import { expect } from "chai";
 import { BigNumber, Contract } from "ethers";
 import { ethers } from "hardhat";
 
-describe("Whitelist", function () {
+describe("Whitelist", () => {
   let Whitelist: Contract;
   const maxWhitelistAccounts = 20;
 
-  this.beforeEach(async () => {
+  beforeEach(async () => {
     const whitelist = await ethers.getContractFactory("Whitelist");
     Whitelist = await whitelist.deploy(maxWhitelistAccounts);
     await Whitelist.deployed();

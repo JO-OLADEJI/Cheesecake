@@ -9,14 +9,25 @@ import "solidity-coverage";
 dotenv.config();
 
 const config: HardhatUserConfig = {
-  solidity: "0.8.0",
+  solidity: {
+    compilers: [
+      {
+        version: "0.8.0",
+      },
+      {
+        version: "0.8.1",
+      },
+    ],
+  },
   defaultNetwork: "ganache",
   networks: {
     ganache: {
       url: "http://127.0.0.1:7545",
       accounts:
-        process.env.DEPLOYER !== undefined && process.env.ADDR1 !== undefined
-          ? [process.env.DEPLOYER, process.env.ADDR1]
+        process.env.DEPLOYER !== undefined &&
+        process.env.ADDR1 !== undefined &&
+        process.env.ADDR2 !== undefined
+          ? [process.env.DEPLOYER, process.env.ADDR1, process.env.ADDR2]
           : [],
     },
     rinkeby: {
