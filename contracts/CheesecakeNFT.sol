@@ -20,7 +20,7 @@ contract CheesecakeNFT is ERC721Enumerable, Ownable {
 	IWhitelist public whitelist;
 
 	modifier onlyWhenNotPaused {
-		require(!_paused, "Contract currently paused");
+		require(!_paused, "CONTRACT_PAUSED");
 		_;
 	}
 
