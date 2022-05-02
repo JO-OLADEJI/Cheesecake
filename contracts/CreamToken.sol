@@ -9,7 +9,7 @@ contract CreamToken is ERC20, Ownable {
 
 	uint256 public constant tokenPrice = 0.001 ether;
 	uint256 public constant tokensPerNFT = 10 ether;
-	uint256 public constant maxTotalSupply = 10000 ether;
+	uint256 public constant maxTotalSupply = 1000 ether;
 	ICheesecakeNFT CheesecakeNFT;
 	mapping(uint256 => bool) public tokenIdsClaimed;
 
@@ -47,7 +47,7 @@ contract CreamToken is ERC20, Ownable {
 		address sender = msg.sender;
 		uint256 balance = CheesecakeNFT.balanceOf(sender);
 		require(
-            balance > 0, 
+            balance > 0,
             "ZERO_CHEESECAKE_OWNED"
         );
 		uint256 amount = 0;

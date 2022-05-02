@@ -27,7 +27,11 @@ const config: HardhatUserConfig = {
         process.env.DEPLOYER !== undefined &&
         process.env.ADDR1 !== undefined &&
         process.env.ADDR2 !== undefined
-          ? [process.env.DEPLOYER, process.env.ADDR1, process.env.ADDR2]
+          ? [
+              `0x${process.env.DEPLOYER}`,
+              `0x${process.env.ADDR1}`,
+              `0x${process.env.ADDR2}`,
+            ]
           : [],
     },
     rinkeby: {
@@ -43,6 +47,9 @@ const config: HardhatUserConfig = {
   },
   etherscan: {
     apiKey: process.env.ETHERSCAN_API_KEY,
+  },
+  mocha: {
+    timeout: 90000,
   },
 };
 
