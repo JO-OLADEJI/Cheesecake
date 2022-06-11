@@ -118,4 +118,14 @@ contract DAO is Ownable {
 		}
 		proposal.executed = true;
 	}
+
+	function withdrawEther() external onlyOwner {
+		(bool success, ) = msg.sender.call{value: address(this).balance}("");
+		require(success, "WITHDRAW_FAILED");
+	}
+
+	receive() external payable {}
+
+	fallback() external payable {}
+
 }
