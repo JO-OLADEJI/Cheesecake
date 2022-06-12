@@ -1,29 +1,52 @@
-// We require the Hardhat Runtime Environment explicitly here. This is optional
-// but useful for running the script in a standalone fashion through `node <script>`.
-//
-// When running the script with `npx hardhat run <script>` you'll find the Hardhat
-// Runtime Environment's members available in the global scope.
 import { ethers } from "hardhat";
 
-async function main() {
-  // Hardhat always runs the compile task when running scripts with its command
-  // line interface.
-  //
-  // If this script is run directly using `node` you may want to call compile
-  // manually to make sure everything is compiled
-  // await hre.run('compile');
+const main = async () => {
+  const [deployer] = await ethers.getSigners();
 
-  // We get the contract to deploy
-  const Greeter = await ethers.getContractFactory("Greeter");
-  const greeter = await Greeter.deploy("Hello, Hardhat!");
+  // Whitelist Contract
+  const MAX_WHITELISTED_ADDRESSES = 5;
+  const whitelist = await ethers.getContractFactory("Whitelist");
+  const Whitelist = await whitelist.deploy(MAX_WHITELISTED_ADDRESSES);
+  await Whitelist.deployed();
+  console.log("Whitelist Contract address", Whitelist.address);
+  await Whitelist.connect(deployer).addAddressToWhitelist();
 
-  await greeter.deployed();
+  // NFT Contract
+  const MAX_NFT_SUPPLY = 10;
+  const PRESALE_MINT_DURATION = 60; // seconds
+  const cheesecakeNft = await ethers.getContractFactory("CheesecakeNFT");
+  const CheesecakseNFT = await cheesecakeNft.deploy(
+    "https://cheesecakenft.io/base-img",
+    Whitelist.address,
+    MAX_NFT_SUPPLY
+  );
+  await CheesecakseNFT.deployed();
+  console.log("Cheesecake NFT address", CheesecakseNFT.address);
+  const startPresaleTx = await CheesecakseNFT.connect(deployer).startPresale(
+    PRESALE_MINT_DURATION
+  );
+  await startPresaleTx.wait();
+  await CheesecakseNFT.connect(deployer).presaleMint({
+    value: ethers.utils.parseEther("0.01"),
+  });
 
-  console.log("Greeter deployed to:", greeter.address);
-}
+  // Marketplace (fake) Contract
+  const fakeNftMarketplace = await ethers.getContractFactory("Marketplace");
+  const FakeNftMarketplace = await fakeNftMarketplace.deploy();
+  await FakeNftMarketplace.deployed();
+  console.log("FakeNftMarketplace address: ", FakeNftMarketplace.address);
 
-// We recommend this pattern to be able to use async/await everywhere
-// and properly handle errors.
+  // DAO Contract
+  const dao = await ethers.getContractFactory("DAO");
+  const DAO = await dao.deploy(
+    CheesecakseNFT.address,
+    FakeNftMarketplace.address,
+    { value: ethers.utils.parseEther("0.05") }
+  );
+  await DAO.deployed();
+  console.log("DAO address", DAO.address);
+};
+
 main().catch((error) => {
   console.error(error);
   process.exitCode = 1;
